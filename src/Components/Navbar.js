@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import logo from "../images/home/logo (2).png";
-// import { FaRegUser } from "react-icons/fa";
-// import Modal from "./Modal";
-// import { AuthContext } from "../contexts/AuthProvider";
-// import Profile from "./Profile";
+import { FaRegUser } from "react-icons/fa";
+import Modal from "./Modal";
+import { AuthContext } from "../contexts/AuthProvider";
+import Profile from "./Profile";
 import { Link } from "react-router-dom";
 // import useCart from "../hooks/useCart";
-// import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isSticky, setSticky] = useState(false);
-  // const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
   // const [cart, refetch] = useCart();
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const Navbar = () => {
 
             {/* login button */}
 
-            {/* {user ? (
+            {user ? (
               <>
                 <Profile user={user} />
               </>
@@ -176,8 +176,8 @@ const Navbar = () => {
               >
                 <FaRegUser /> Login
               </button>
-            )} */}
-            {/* <Modal /> */}
+            )}
+            <Modal />
           </div>
         </div>
       </header>
