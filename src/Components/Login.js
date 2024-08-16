@@ -1,57 +1,60 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaFacebookF, FaGithub, FaGoogle, FaRegUser } from "react-icons/fa";
+import { FaFacebookF, FaGithub, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import Modal from "./Modal";
-import { AuthContext } from "../contexts/AuthProvider";
+// import { AuthContext } from "../contexts/AuthProvider";
 // import axios from "axios";
 // import useAxiosPublic from "../hooks/useAxiosPublic";
+import useAuth from "../hooks/useAuth";
 
-const Signup = () => {
-  const { signUpWithGmail, createUser, updateUserProfile } =
-    useContext(AuthContext);
-  // //   const axiosPublic = useAxiosPublic();
+const Login = () => {
+  const [errorMessage, seterrorMessage] = useState("");
+  const { signUpWithGmail, login } = useAuth();
+  //   const axiosPublic = useAxiosPublic();
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
 
+  //react hook form
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
     const email = data.email;
     const password = data.password;
-    // console.log(email, password)
-    createUser(email, password)
+    login(email, password)
       .then((result) => {
-        // Signed up
-        // const user = result.user;
-        updateUserProfile(data.email, data.photoURL).then(() => {
-          const userInfo = {
-            name: data.name,
-            email: data.email,
-          };
-          navigate(from, { replace: true });
-          // axiosPublic.post("/users", userInfo).then((response) => {
-          //   // console.log(response);
-          //   alert("Signin successful!");
-          //   navigate(from, { replace: true });
-          // });
-        });
+        // Signed in
+        const user = result.user;
+        const userInfo = {
+          name: data.name,
+          email: data.email,
+        };
+
+        // axiosPublic.post("/users", userInfo).then((response) => {
+        //   // console.log(response);
+        //   alert("Signin successful!");
+        //   navigate(from, { replace: true });
+        // });
+        // console.log(user);
+        // alert("Login successful!");
+        // navigate(from);
+        // ...
       })
       .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
+        seterrorMessage("Please provide valid email & password!");
       });
+    reset();
   };
 
-  //   signup with google
+  // login with google
   const handleRegister = () => {
     signUpWithGmail()
       .then((result) => {
@@ -60,33 +63,23 @@ const Signup = () => {
           name: result?.user?.displayName,
           email: result?.user?.email,
         };
-        // axiosPublic.post("/users", userInfo).then((response) => {
-        //   // console.log(response);
-
-        //   alert("Signin successful!");
-        //   navigate("/");
-        // });
-        navigate("/");
+        //       // axiosPublic.post("/users", userInfo).then((response) => {
+        //       //   // console.log(response);
+        //       //   alert("Signin successful!");
+        //       //   navigate("/");
+        //       // });
       })
       .catch((error) => console.log(error));
   };
   return (
     <div className="max-w-md bg-white shadow w-full mx-auto flex items-center justify-center my-20">
       <div className="mb-5">
-        <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="font-bold text-lg">Please Create An Account!</h3>
-          {/* name */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Name</span>
-            </label>
-            <input
-              type="name"
-              placeholder="Your name"
-              className="input input-bordered"
-              {...register("name")}
-            />
-          </div>
+        <form
+          className="card-body"
+          method="dialog"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <h3 className="font-bold text-lg">Please Login!</h3>
 
           {/* email */}
           <div className="form-control">
@@ -110,7 +103,7 @@ const Signup = () => {
               type="password"
               placeholder="password"
               className="input input-bordered"
-              {...register("password")}
+              {...register("password", { required: true })}
             />
             <label className="label">
               <a href="#" className="label-text-alt link link-hover mt-2">
@@ -119,24 +112,37 @@ const Signup = () => {
             </label>
           </div>
 
-          {/* error message */}
-          <p>{errors.message}</p>
+          {/* show errors */}
+          {errorMessage ? (
+            <p className="text-red text-xs italic">
+              Provide a correct username & password.
+            </p>
+          ) : (
+            ""
+          )}
 
           {/* submit btn */}
-          <div className="form-control mt-6">
+          <div className="form-control mt-4">
             <input
               type="submit"
               className="btn bg-green text-white"
-              value="Sign up"
+              value="Login"
             />
           </div>
 
-          <div className="text-center my-2">
-            Have an account?
-            <Link to="/login">
-              <button className="ml-2 underline">Login here</button>
+          {/* close btn */}
+          <Link to="/">
+            <div className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </div>
+          </Link>
+
+          <p className="text-center my-2">
+            Donot have an account?
+            <Link to="/signup" className="underline text-red ml-1">
+              Signup Now
             </Link>
-          </div>
+          </p>
         </form>
         <div className="text-center space-x-3">
           <button
@@ -157,4 +163,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

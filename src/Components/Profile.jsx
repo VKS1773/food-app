@@ -11,6 +11,7 @@ const Profile = ({ user }) => {
   const handleLogout = () => {
     logOut()
       .then(() => {
+        alert("logout")
         // Sign-out successful.
         navigate("/");
       })

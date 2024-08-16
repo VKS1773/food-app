@@ -41,7 +41,7 @@ const Modal = () => {
     reset();
   };
 
-  // login with google
+  // // login with google
   const handleRegister = () => {
     signUpWithGmail()
       .then((result) => {
@@ -122,7 +122,11 @@ const Modal = () => {
 
             <p className="text-center my-2">
               Donot have an account?
-              <Link to="/signup" className="underline text-red ml-1">
+              <Link
+                onClick={() => document.getElementById("my_modal_5").close()}
+                to="/signup"
+                className="underline text-red ml-1"
+              >
                 Signup Now
               </Link>
             </p>
